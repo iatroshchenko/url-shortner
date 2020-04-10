@@ -1,0 +1,35 @@
+version: '3'
+services:
+  api-nginx:
+    build:
+      context: './docker/nginx'
+      dockerfile: nginx.Dockerfile
+    volumes:
+      - ./:/var/www/app
+    ports:
+      - "80:80"
+  api-php-fpm:
+    build:
+      context: './docker/php-fpm'
+      dockerfile: php-fpm.Dockerfile
+    volumes:
+      - ./:/var/www/app
+  api-nodejs:
+    image: node:latest
+    volumes:
+      - ./:/var/www/app
+    working_dir: /var/www/app
+    tty: true
+  mysql:
+    image: mysql
+    ports:
+      - "3306:3306"
+    command: --default-authentication-plugin=mysql_native_password --sql_mode=''
+    restart: always
+    volumes:
+      - ./docker/mysql/data:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: shortner
+      MYSQL_USER: shortner
+      MYSQL_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: secret
